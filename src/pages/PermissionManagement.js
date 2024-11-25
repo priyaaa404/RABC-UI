@@ -1,44 +1,42 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 const PermissionManagement = () => {
-  const [permissions, setPermissions] = useState(["Read", "Write", "Delete"]);
-  const [newPermission, setNewPermission] = useState("");
+  const [permissions, setPermissions] = useState({
+    'Admin': ['Read', 'Write', 'Delete'],
+    'User': ['Read']
+  });
+  const [role, setRole] = useState('Admin');
+  const [newPermission, setNewPermission] = useState('');
 
-  const addPermission = () => {
-    if (!newPermission) {
-      alert("Permission cannot be empty!");
-      return;
+  const handleAddPermission = () => {
+    if (newPermission && !permissions[role].includes(newPermission)) {
+      setPermissions({
+        ...permissions,
+        [role]: [...permissions[role], newPermission]
+      });
+      setNewPermission('');
     }
-    if (permissions.includes(newPermission)) {
-      alert("Permission already exists!");
-      return;
-    }
-    setPermissions([...permissions, newPermission]);
-    setNewPermission("");
-  };
-
-  const deletePermission = (permission) => {
-    setPermissions(permissions.filter((perm) => perm !== permission));
   };
 
   return (
     <div>
       <h2>Permission Management</h2>
-      <div>
-        <h3>Add Permission</h3>
-        <input
-          type="text"
-          placeholder="Permission"
-          value={newPermission}
-          onChange={(e) => setNewPermission(e.target.value)}
-        />
-        <button onClick={addPermission}>Add Permission</button>
-      </div>
+      <select value={role} onChange={(e) => setRole(e.target.value)}>
+        {Object.keys(permissions).map((role) => (
+          <option key={role} value={role}>{role}</option>
+        ))}
+      </select>
+      <input
+        type="text"
+        value={newPermission}
+        onChange={(e) => setNewPermission(e.target.value)}
+        placeholder="New permission"
+      />
+      <button onClick={handleAddPermission}>Add Permission</button>
+      <h3>Permissions for {role}</h3>
       <ul>
-        {permissions.map((perm, index) => (
-          <li key={index}>
-            {perm} <button onClick={() => deletePermission(perm)}>Delete</button>
-          </li>
+        {permissions[role].map((perm, index) => (
+          <li key={index}>{perm}</li>
         ))}
       </ul>
     </div>
